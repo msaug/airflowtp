@@ -35,7 +35,7 @@ task_one = PythonOperator(
     dag=second_dag,
     python_callable=_get_spreadsheet,
     op_kwargs={
-        "output_folder": "/opt/airflow/dags",
+        "outpur_folder": "/opt/airflow/dags",
         "epoch": "{{ execution_date.int_timestamp }}",
         "url": "http://www.lutemusic.org/spreadsheet.xlsx"
     },
@@ -67,7 +67,7 @@ task_three = PythonOperator(
     dag=second_dag,
     python_callable=_time_filter,
     op_kwargs={
-        "output_folder": "/opt/airflow/dags",
+        "outpur_folder": "/opt/airflow/dags",
         "epoch": "{{ execution_date.int_timestamp }}",
         "previous_epoch": "{{ prev_execution_date.int_timestamp }}",
         "next_epoch": "{{ next_execution_date.int_timestamp }}",
@@ -92,7 +92,7 @@ task_four = BranchPythonOperator(
     python_callable=_emptiness_check,
     op_kwargs={
         'previous_epoch': '{{ prev_execution_date.int_timestamp }}',
-        "output_folder": "/opt/airflow/dags"
+        "outpur_folder": "/opt/airflow/dags"
     },
     trigger_rule='all_success',
 )
@@ -115,7 +115,7 @@ task_five = PythonOperator(
     dag=second_dag,
     python_callable=_split,
     op_kwargs={
-        'output_folder': '/opt/airflow/dags',
+        'outpur_folder': '/opt/airflow/dags',
         'previous_epoch': '{{ prev_execution_date.int_timestamp }}',
     },
     trigger_rule='all_success',
@@ -158,7 +158,7 @@ task_six_a = PythonOperator(
     python_callable=_create_intavolature_query,
     op_kwargs={
         'previous_epoch': '{{ prev_execution_date.int_timestamp }}',
-        'output_folder': '/opt/airflow/dags',
+        'outpur_folder': '/opt/airflow/dags',
     },
     trigger_rule='all_success',
 )
@@ -189,7 +189,7 @@ task_six_b = PythonOperator(
     python_callable=_create_composer_query,
     op_kwargs={
         'previous_epoch': '{{ prev_execution_date.int_timestamp }}',
-        'output_folder': '/opt/airflow/dags',
+        'outpur_folder': '/opt/airflow/dags',
     },
     trigger_rule='all_success',
 )

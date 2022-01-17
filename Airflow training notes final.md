@@ -373,7 +373,7 @@ task_one = PythonOperator(
     dag=second_dag,
     python_callable=_get_spreadsheet,
     op_kwargs={
-        "output_folder": "/usr/local/airflow/data",
+        "outpur_folder": "/usr/local/airflow/data",
         "epoch": "{{ execution_date.int_timestamp }}",
         "url": "http://www.gerbode.net/spreadsheet.xlsx"
     },

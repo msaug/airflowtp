@@ -7,7 +7,12 @@ import urllib.request as request
 fake = Faker()
 
 
-def _generate_names(output_folder):
+def _generate_names(output_file:str,epoch:int):
+    """Generates names for 5 characters and saves them
+
+    :param output_file: The file location to save
+    :type output_file: str
+    """
     characters = []
     for i in range(5):
         character = {'name': fake.name()}
@@ -16,30 +21,44 @@ def _generate_names(output_folder):
         'characters': characters
     }
     json_string = json.dumps(data)
-    with open(f"{output_folder}", 'w') as outfile:
+    with open(f"{output_file}/epoch", 'w') as outfile:
         json.dump(data, outfile)
 
 
-def _set_level(input_folder, output_folder):
-    with open(input_folder) as json_file:
+def _set_level(input_file, output_file):
+    """Sets a random level to all our characters
+
+        :param input_file: The file location of the data
+        :type input_file: str
+        :param output_file: The file location to save the new data
+        :type output_file: str
+    """
+    with open(input_file) as json_file:
         data = json.load(json_file)
 
     characters = data["characters"]
     for character in characters:
         character["level"] = random.randint(1, 3)
 
-    with open(f"{output_folder}", 'w') as outfile:
+    with open(f"{output_file}", 'w') as outfile:
         json.dump(data, outfile)
 
 
-def _set_race(input_folder, output_folder):
+def _set_race(input_file, output_file):
+    """Sets a random race to all our characters
+
+        :param input_file: The file location of the data
+        :type input_file: str
+        :param output_file: The file location to save the new data
+        :type output_file: str
+    """
     webURL = request.urlopen("https://www.dnd5eapi.co/api/races")
     response = webURL.read()
     encoding = webURL.info().get_content_charset('utf-8')
     race_data = json.loads(response.decode(encoding))
     race_results = race_data["results"]
 
-    with open(input_folder) as json_file:
+    with open(input_file) as json_file:
         data = json.load(json_file)
 
     characters = data["characters"]
@@ -47,12 +66,19 @@ def _set_race(input_folder, output_folder):
         randIndex = random.randint(0, len(race_results) - 1)
         character["race"] = race_results[randIndex]["index"]
 
-    with open(f"{output_folder}", 'w') as outfile:
+    with open(f"{output_file}", 'w') as outfile:
         json.dump(data, outfile)
 
 
-def _set_language(input_folder, output_folder):
-    with open(input_folder) as json_file:
+def _set_language(input_file, output_file):
+    """Gives our characters all the languages from their race
+
+        :param input_file: The file location of the data
+        :type input_file: str
+        :param output_file: The file location to save the new data
+        :type output_file: str
+    """
+    with open(input_file) as json_file:
         data = json.load(json_file)
     characters = data["characters"]
 
@@ -68,12 +94,20 @@ def _set_language(input_folder, output_folder):
             char_language.append(language["index"])
         character["languages"] = char_language
 
-    with open(f"{output_folder}", 'w') as outfile:
+    with open(f"{output_file}", 'w') as outfile:
         json.dump(data, outfile)
 
 
-def _set_race_proficiencies(input_folder, output_folder):
-    with open(input_folder) as json_file:
+def _set_race_proficiencies(input_file, output_file):
+    """Sets the basic race-related proficiencies and selects random ones in the
+    optional proficiencies.
+
+        :param input_file: The file location of the data
+        :type input_file: str
+        :param output_file: The file location to save the new data
+        :type output_file: str
+    """
+    with open(input_file) as json_file:
         data = json.load(json_file)
     characters = data["characters"]
 
@@ -100,30 +134,45 @@ def _set_race_proficiencies(input_folder, output_folder):
 
         character["proficiencies"] = char_proficiencies
 
-    with open(f"{output_folder}", 'w') as outfile:
+    with open(f"{output_file}", 'w') as outfile:
         json.dump(data, outfile)
 
 
-def _set_classes(input_folder, output_folder):
+def _set_classes(input_file, output_file):
+    """Sets a random class to our characters
+
+        :param input_file: The file location of the data
+        :type input_file: str
+        :param output_file: The file location to save the new data
+        :type output_file: str
+    """
     webURL = request.urlopen("https://www.dnd5eapi.co/api/classes")
     response = webURL.read()
     encoding = webURL.info().get_content_charset('utf-8')
     classes_data = json.loads(response.decode(encoding))
     classes_result = classes_data["results"]
 
-    with open(input_folder) as json_file:
+    with open(input_file) as json_file:
         data = json.load(json_file)
     characters = data["characters"]
     for character in characters:
         randIndex = random.randint(0, len(classes_result) - 1)
         character["class"] = classes_result[randIndex]["index"]
 
-    with open(f"{output_folder}", 'w') as outfile:
+    with open(f"{output_file}", 'w') as outfile:
         json.dump(data, outfile)
 
 
-def _set_class_proficiencies(input_folder, output_folder):
-    with open(input_folder) as json_file:
+def _set_class_proficiencies(input_file, output_file):
+    """Gives our character the basic class-related proficiencies and selects random ones
+        among the optional choices
+
+        :param input_file: The file location of the data
+        :type input_file: str
+        :param output_file: The file location to save the new data
+        :type output_file: str
+    """
+    with open(input_file) as json_file:
         data = json.load(json_file)
         characters = data["characters"]
     for character in characters:
@@ -145,25 +194,39 @@ def _set_class_proficiencies(input_folder, output_folder):
             char_proficiencies.append(opt_prof_from[randIndex]["index"])
             opt_prof_from.pop(randIndex)
 
-        with open(f"{output_folder}", 'w') as outfile:
+        with open(f"{output_file}", 'w') as outfile:
             json.dump(data, outfile)
 
-def _set_spells(input_folder, output_folder):
-    with open(input_folder) as json_file:
+
+def _set_spells(input_file, output_file):
+    """Gives (n_level+3) random spells to our characters. Spells are at most level 2
+
+        :param input_file: The file location of the data
+        :type input_file: str
+        :param output_file: The file location to save the new data
+        :type output_file: str
+        """
+    with open(input_file) as json_file:
         data = json.load(json_file)
         characters = data["characters"]
+
     for character in characters:
+        # get the spells available for this class
         webURL = request.urlopen(f"https://www.dnd5eapi.co/api/classes/{character['class']}/spells")
         response = webURL.read()
         encoding = webURL.info().get_content_charset('utf-8')
         result = json.loads(response.decode(encoding))
         class_spells = result["results"]
-        nbOfSpells = character["level"]+3
+
+        nbOfSpells = character["level"] + 3
         charSpells = []
-        done = False
-        if len(class_spells)!=0:
-            while nbOfSpells!=0:
-                randSpell = random.randint(0,len(class_spells)-1)
+
+        # Some classes don't have spells available.
+        # As long as our character doesn't have all his spells, we pick a new spell and check if it suits the
+        # requirements
+        if len(class_spells) != 0:
+            while nbOfSpells != 0:
+                randSpell = random.randint(0, len(class_spells) - 1)
                 print(randSpell)
                 spellIndex = class_spells[randSpell]["index"]
                 webURL = request.urlopen(f"https://www.dnd5eapi.co/api/spells/{spellIndex}")
@@ -171,18 +234,25 @@ def _set_spells(input_folder, output_folder):
                 encoding = webURL.info().get_content_charset('utf-8')
                 result = json.loads(response.decode(encoding))
                 print(result)
-                if(result["level"]<=2):
-                    nbOfSpells-=1
+                if (result["level"] <= 2):
+                    nbOfSpells -= 1
                     charSpells.append(spellIndex)
 
-        character["spells"]=charSpells
+        character["spells"] = charSpells
 
-    with open(f"{output_folder}", 'w') as outfile:
+    with open(f"{output_file}", 'w') as outfile:
         json.dump(data, outfile)
 
 
-def _set_attributes(input_folder, output_folder):
-    with open(input_folder) as json_file:
+def _set_attributes(input_file, output_file):
+    """Sets random attributes to our characters.
+
+        :param input_file: The file location of the data
+        :type input_file: str
+        :param output_file: The file location to save the new data
+        :type output_file: str
+        """
+    with open(input_file) as json_file:
         data = json.load(json_file)
     characters = data["characters"]
     for character in characters:
@@ -199,7 +269,7 @@ def _set_attributes(input_folder, output_folder):
         character["wisdom"] = wisdom
         character["charisma"] = charisma
         character["attributes"] = f"{[strength, dexterity, constitution, intelligence, wisdom, charisma]}"
-    with open(f"{output_folder}", 'w') as outfile:
+    with open(f"{output_file}", 'w') as outfile:
         json.dump(data, outfile)
 
 
@@ -211,6 +281,6 @@ _set_race_proficiencies("./languages.json", "./race_proficiencies.json")
 _set_attributes("./race_proficiencies.json", "./attributes.json")
 _set_classes("./attributes.json", "./classes.json")
 _set_class_proficiencies("./classes.json", "./proficiencies.json")
-_set_spells("./proficiencies.json","./spells.json")
+_set_spells("./proficiencies.json", "./spells.json")
 
 # name>>race>>[language, race_profficiencies] parallele : class>> level>>sorts parallel: class_profficiencies
